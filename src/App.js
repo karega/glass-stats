@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import * as R from "ramda";
+import JSBI from "jsbi";
 import Web3 from "web3";
 import detectEthereumProvider from "@metamask/detect-provider";
 
@@ -11,6 +12,16 @@ const base_unit = 0.00001;
 const glass_token_address = "0x9c9d4302a1a550b446401e56000f76bc761c3a33";
 const pcs_glass_exchange_address = "0x78d55aEfdD7d58FC3a4B63C9aBb6147230396D63";
 const pcs_bnb_exchange_address = "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16";
+
+export const ZERO = JSBI.BigInt(0)
+export const ONE = JSBI.BigInt(1)
+export const TWO = JSBI.BigInt(2)
+export const THREE = JSBI.BigInt(3)
+export const FIVE = JSBI.BigInt(5)
+export const TEN = JSBI.BigInt(10)
+export const _100 = JSBI.BigInt(100)
+export const _998 = JSBI.BigInt(998)
+export const _1000 = JSBI.BigInt(1000)
 
 let	loop;
 
@@ -97,6 +108,16 @@ class App extends Component {
 		);
 	}
 
+	getInputAmount = (outputReserve, inputReserve, outputAmount) => {
+		const numerator = JSBI.multiply(JSBI.multiply(inputReserve, outputAmount), _1000);
+		const denominator = JSBI.multiply(JSBI.subtract(outputReserve, outputAmount), _998);
+		const inputAmount = JSBI.add(JSBI.divide(numerator, denominator), ONE);
+
+
+		console.log("inputAmount", inputAmount);
+		return inputAmount;
+	}
+
 	buildStats = async () => {
 		try {
 			const _state = {};
@@ -123,12 +144,12 @@ class App extends Component {
 					const glass_exchange_decimals = await glass_exchange.methods.decimals().call();
 					const output_decimals = parseInt(bnb_token.decimals ? bnb_token.decimals.toString() : 0, 10);
 					const token_decimals_uint = Math.pow(10, output_decimals);
-					const exchange_decimals_uint = Math.pow(10, glass_exchange_decimals);
+					const exchange_decimals_uint = Math.pow(10, output_decimals);
 
 					const glass_exchange_reserves = await glass_exchange.methods.getReserves().call();
 					const output_reserve = BigInt(R.pathOr(0, [0], glass_exchange_reserves));
 					const input_reserve = BigInt(R.pathOr(0, [1], glass_exchange_reserves));
-					const input_amount_with_fee = BigInt(exchange_decimals_uint);
+					const input_amount_with_fee = BigInt(1e9);
 					const numerator = input_amount_with_fee * output_reserve;
 					const denominator = input_reserve + input_amount_with_fee;
 					const tokens_output = numerator / denominator;
@@ -151,6 +172,9 @@ class App extends Component {
 				let numerator = input_amount_with_fee * output_reserve;
 				let denominator = input_reserve + input_amount_with_fee;
 
+				// const input = this.getInputAmount(+R.pathOr(0, [0], bnb_exchange_reserves), +R.pathOr(0, [1], bnb_exchange_reserves), 1e9);
+
+				// console.log("input");
 				// console.log("spend_amount", spend_amount);
 				// console.log("output_reserve", output_reserve);
 				// console.log("input_reserve", input_reserve);
