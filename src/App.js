@@ -9,7 +9,7 @@ import { abi_glass } from "./contracts/abi-glass";
 import { abi_pcs_exchange } from "./contracts/abi-pcs-exchange";
 
 const base_unit = 0.00001;
-const glass_token_address = "0x9c9d4302a1a550b446401e56000f76bc761c3a33";
+const glass_token_address = "0xf7f3b809bbfa2eabc7756306cd6755b53f76bf34";
 const pcs_glass_exchange_address = "0x78d55aEfdD7d58FC3a4B63C9aBb6147230396D63";
 const pcs_bnb_exchange_address = "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16";
 
@@ -84,7 +84,7 @@ class App extends Component {
 
 	render() {
 		const { bnb_price, time_since, token_price_bnb, token_price_usd, total_fees, total_supply, usd_price } = this.state;
-		
+
 		return (
 			<React.Fragment>
 				<div className="container">
